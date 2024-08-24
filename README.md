@@ -7,7 +7,9 @@ Contributors:
 
 Yanis BOUCHILLOUX
 
-Clément Zhuang
+Clément ZHUANG
+
+Gilles PLACE (Digit-Air)
 
 Florentin DAM (Targech)
 
