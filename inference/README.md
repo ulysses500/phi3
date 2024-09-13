@@ -79,4 +79,38 @@ In the different hallucinations we can see that the model is generating a conver
 We search for words such as : "system", "user", "assistant", "bot", "Query :", "Response :", "Prompt :", "Answer :", "Question :", "Chat :", "Conversation :"
 
 
-## Problem 3 : 
+## Problem 3 : Stop generation
+
+When generating text, the model may sometimes fall into loops, repeating the same words or phrases. The `repeat_penalty` parameter discourages such behavior by reducing the probability of selecting tokens that have already been used. But it is not enough. For each request made, a max_length is set and the model if not trained on a qualitative and coherent dataset would generate text to reach this max_length. This can sometimes lead to the llm repeating the same words or phrases. To solve this problem we have implemented a solution where the model stops generating text if it encounters any of the specified stop sequences. For example, if you set `/set parameter stop "."`, the model would stop after generating a period, assuming the end of a sentence. Multiple stop sequences can be provided. But there are other ways.
+When infering the model phi3 that is served on ollama, a max_length is not specified normally (we can specify one but its not always the best option as you can have your response cut). This will lead to model generating without stopping itself.
+
+Two solutions are implemented:
+- The first one would be implementing a system that will stop the request when a certain number of tokens or time taken is reached.
+- The second would be to try to detect when the model is generating a hallucination and stop the request. The request are stopped in the api side and not on the model side so it will continue to generate. Because of this, it is important to reset the ollama server at this time.
+
+## Problem 4 : Timeout
+
+When loading model, there can be timeout problem depending on what is charged. The ollama server timeout is set at 30 seconds, so if the model is not loaded in this time, the request will be stopped. The problem will occur when you try to load a model while another one is already loaded. In fact, you can normally load only one model at a time. To solve this problem, you have to set the number of models that can be simultaneously loaded to Y.
+So first kill ollama server with 
+```sh
+pkill ollama
+```
+And then start the ollama server with the number of models that can be simultaneously loaded.
+```sh
+OLLAMA_MAX_LOADED_MODELS=Y ollama serve
+```
+
+## Running multiple instances
+Ollama enables to run multiple instances of llm model. This can lead to the server being able to process multiple request at a time. To do this you will have to first redefine a variable used to initialize the ollama server.
+```sh
+OLLAMA_NUM_PARALLEL=X
+```
+Then you can start the server with
+```sh
+ollama serve
+```
+
+## 
+
+
+
